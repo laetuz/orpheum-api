@@ -2,6 +2,7 @@ package id.neotica.data
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import id.neotica.domain.NeoDatabase
 import id.neotica.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -48,9 +49,4 @@ class DatabaseImpl(
             .load()
             .migrate()
     }
-}
-
-// The interface contract (usually in its own file or at the bottom)
-interface NeoDatabase {
-    suspend fun <T> dbQuery(block: () -> T): T
 }
