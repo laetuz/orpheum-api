@@ -29,9 +29,8 @@ class DatabaseImpl(
             driverClassName = "org.postgresql.Driver"
 
             // 🚨 CRITICAL ORPHEUM OVERRIDE 🚨
-            // Assuming NEOSERVER_PG_BASE_URL is "jdbc:postgresql://127.0.0.1:5433"
             val baseUrl = Utils.EnvLoader["NEOSERVER_PG_BASE_URL"]
-            jdbcUrl = "$baseUrl/db_orpheum"
+            jdbcUrl = "${baseUrl}db_orpheum"
 
             username = Utils.EnvLoader["NEOSERVER_PG_USER"]
             password = Utils.EnvLoader["NEOSERVER_PG_PASSWORD"]

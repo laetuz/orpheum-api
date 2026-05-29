@@ -6,6 +6,10 @@ import id.neotica.data.repository.PlaylistRepositoryImpl
 import id.neotica.domain.NeoDatabase
 import id.neotica.domain.repository.CatalogRepository
 import id.neotica.domain.repository.PlaylistRepository
+import id.neotica.route.AdminRoute
+import id.neotica.route.CatalogRoute
+import id.neotica.route.PlaylistRoute
+import id.neotica.route.StreamRoute
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import org.koin.core.module.dsl.singleOf
@@ -21,4 +25,9 @@ val orpheumModule = module {
     single {
         HttpClient(CIO) { expectSuccess = false }
     }
+
+    singleOf(::AdminRoute)
+    singleOf(::CatalogRoute)
+    singleOf(::PlaylistRoute)
+    singleOf(::StreamRoute)
 }
