@@ -32,6 +32,8 @@ dependencies {
     implementation(libs.ktor.server.call.logging)
     implementation(libs.ktor.server.auth.jwt)
 
+    implementation(libs.ktor.cors)
+
     // Internal Client for SeaweedFS Proxying
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)

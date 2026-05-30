@@ -2,6 +2,7 @@ package id.neotica
 
 import id.neotica.application.configureAuthentication
 import id.neotica.application.configureFrameworks
+import id.neotica.application.configureHTTP
 import id.neotica.application.configureMonitoring
 import id.neotica.application.configureSerialization
 import io.ktor.server.application.*
@@ -16,4 +17,5 @@ fun Application.module() {
     configureMonitoring()
     configureFrameworks()
     configureRouting()
+    configureHTTP()
 }

@@ -36,7 +36,7 @@ class CatalogRepositoryImpl(
             .paginate(params) { it.toAlbum() }
     }
 
-    // 2. The brand new Track feed
+    // 2. The brand-new Track feed
     override suspend fun getNewTracks(params: PaginationParams): PaginatedResponse<Track> = db.dbQuery {
         // We join the Track and Album tables so we can sort the tracks
         // by how recently their parent album was created.
@@ -148,5 +148,35 @@ class CatalogRepositoryImpl(
             this.durationSeconds = durationSeconds
             this.fileUrl = fileUrl
         }.toTrack()
+    }
+
+    override suspend fun updateAlbum(
+        albumId: String, title: String?, releaseYear: Int?, coverUrl: String?
+    ): Album? = db.dbQuery {
+        val uuid = try { UUID.fromString(albumId) } catch (e: Exception) { return@dbQuery null }
+        val album = AlbumEntity.findById(uuid) ?: return@dbQuery null
+
+        // Only update fields if they were provided in the request
+        title?.let { album.title = it }
+        releaseYear?.let { album.releaseYear = it }
+        coverUrl?.let { album.coverUrl = it }
+
+        album.toAlbum()
+    }
+
+    override suspend fun deleteAlbum(albumId: String): Boolean = db.dbQuery {
+        val uuid = try { UUID.fromString(albumId) } catch (e: Exception) { return@dbQuery false }
+        val album = AlbumEntity.findById(uuid) ?: return@dbQuery false
+
+        album.delete()
+        true
+    }
+
+    override suspend fun deleteTrack(trackId: String): Boolean = db.dbQuery {
+        val uuid = try { UUID.fromString(trackId) } catch (e: Exception) { return@dbQuery false }
+        val track = TrackEntity.findById(uuid) ?: return@dbQuery false
+
+        track.delete()
+        true
     }
 }

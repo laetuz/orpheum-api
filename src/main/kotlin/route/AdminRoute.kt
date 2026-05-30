@@ -2,10 +2,12 @@ package id.neotica.route
 
 import id.neotica.domain.model.catalog.request.CreateAlbumRequest
 import id.neotica.domain.model.catalog.request.CreateArtistRequest
+import id.neotica.domain.model.catalog.request.EditAlbumRequest
 import id.neotica.domain.repository.CatalogRepository
 import id.neotica.utils.Constants.AUTH_JWT
 import id.neotica.utils.Constants.WEED_URL
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -21,7 +23,9 @@ import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import java.util.UUID
 
@@ -114,6 +118,71 @@ class AdminRoute(
                         call.respond(HttpStatusCode.Created, track)
                     } else {
                         call.respond(HttpStatusCode.BadRequest, "Failed to map track to database. Verify Album ID.")
+                    }
+                }
+
+                put("/albums/{album_id}") {
+                    val albumId = call.parameters["album_id"]
+                        ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing album_id.")
+
+                    val request = call.receive<EditAlbumRequest>()
+
+                    val updatedAlbum = repository.updateAlbum(
+                        albumId = albumId,
+                        title = request.title,
+                        releaseYear = request.releaseYear,
+                        coverUrl = request.coverUrl
+                    )
+
+                    if (updatedAlbum != null) {
+                        call.respond(HttpStatusCode.OK, updatedAlbum)
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Album not found or invalid ID.")
+                    }
+                }
+
+                // DELETE /admin/albums/{album_id} (Delete Album)
+                delete("/albums/{album_id}") {
+                    val albumId = call.parameters["album_id"]
+                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing album_id.")
+
+                    val success = repository.deleteAlbum(albumId)
+                    if (success) {
+                        call.respond(HttpStatusCode.OK, "Album deleted successfully.")
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "Album not found.")
+                    }
+                }
+
+                // DELETE /admin/tracks/{track_id} (Delete Track & File)
+                delete("/tracks/{track_id}") {
+                    val trackId = call.parameters["track_id"]
+                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing track_id.")
+
+                    // 1. Get the track details to find the SeaweedFS file path
+                    val track = repository.getTrackDetails(trackId)
+                        ?: return@delete call.respond(HttpStatusCode.NotFound, "Track not found.")
+
+                    // 2. Delete the physical file from SeaweedFS
+                    try {
+                        println("▶️ Attempting to delete file from storage: $seaweedBaseUrl/${track.fileUrl}")
+                        val weedResponse = httpClient.delete("$seaweedBaseUrl/${track.fileUrl}")
+
+                        if (!weedResponse.status.isSuccess()) {
+                            println("⚠️ Storage Server Warning: File not found or failed to delete. Status: ${weedResponse.status}")
+                        } else {
+                            println("✅ File completely erased from storage vault.")
+                        }
+                    } catch (e: Exception) {
+                        println("💥 HTTP Client Crash: Could not connect to storage vault to delete file.")
+                    }
+
+                    // 3. Delete the row from PostgreSQL
+                    val success = repository.deleteTrack(trackId)
+                    if (success) {
+                        call.respond(HttpStatusCode.OK, "Track and file deleted successfully.")
+                    } else {
+                        call.respond(HttpStatusCode.InternalServerError, "Failed to delete track from database.")
                     }
                 }
             }

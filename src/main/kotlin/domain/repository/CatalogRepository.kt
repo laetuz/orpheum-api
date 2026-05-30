@@ -17,4 +17,7 @@ interface CatalogRepository {
     suspend fun createArtist(name: String, bio: String?, imageUrl: String?): Artist
     suspend fun createAlbum(artistId: String, title: String, releaseYear: Int, coverUrl: String?): Album?
     suspend fun createTrack(albumId: String, title: String, trackNumber: Int, durationSeconds: Int, fileUrl: String): Track?
+    suspend fun updateAlbum(albumId: String, title: String?, releaseYear: Int?, coverUrl: String?): Album?
+    suspend fun deleteAlbum(albumId: String): Boolean
+    suspend fun deleteTrack(trackId: String): Boolean
 }
