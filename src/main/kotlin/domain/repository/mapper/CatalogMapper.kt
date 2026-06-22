@@ -34,7 +34,8 @@ fun TrackEntity.toTrack() = Track(
     title = this.title,
     durationSeconds = this.durationSeconds,
     fileUrl = this.fileUrl,
-    trackNumber = this.trackNumber
+    trackNumber = this.trackNumber,
+    artistName = this.album.artist.name
 )
 
 fun ResultRow.toAlbum() = Album(

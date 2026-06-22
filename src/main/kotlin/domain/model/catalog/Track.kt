@@ -10,5 +10,6 @@ data class Track(
     val title: String,
     @SerialName("duration_seconds") val durationSeconds: Int,
     @SerialName("file_url") val fileUrl: String,
-    @SerialName("track_number") val trackNumber: Int
+    @SerialName("track_number") val trackNumber: Int,
+    @SerialName("artist_name") val artistName: String
 )

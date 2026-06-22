@@ -11,6 +11,10 @@ application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 // Memory Optimization: AppCDS for sharing JVM memory with Neostore
 tasks.withType<JavaExec> {
     jvmArgs = listOf(
@@ -51,4 +55,10 @@ dependencies {
     implementation(libs.koin.logger)
     implementation(libs.logback.classic)
     implementation(libs.java.jwt)
+}
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    archiveBaseName.set("shadow")
+    archiveClassifier.set("")
+    archiveVersion.set("")
 }
