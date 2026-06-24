@@ -14,6 +14,7 @@ interface CatalogRepository {
     suspend fun getArtistAlbums(artistId: String): List<Album>
     suspend fun getAlbumWithTracks(albumId: String): AlbumWithTracks?
     suspend fun getTrackDetails(trackId: String): Track?
+    suspend fun searchTracks(query: String, params: PaginationParams): PaginatedResponse<Track>
     suspend fun createArtist(name: String, bio: String?, imageUrl: String?): Artist
     suspend fun createAlbum(artistId: String, title: String, releaseYear: Int, coverUrl: String?): Album?
     suspend fun createTrack(albumId: String, title: String, trackNumber: Int, durationSeconds: Int, fileUrl: String): Track?

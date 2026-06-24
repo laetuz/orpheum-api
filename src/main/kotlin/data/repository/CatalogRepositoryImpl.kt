@@ -21,7 +21,9 @@ import id.neotica.utils.paginate
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.like
 import org.jetbrains.exposed.v1.core.lowerCase
+import org.jetbrains.exposed.v1.core.or
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import java.util.UUID
 
@@ -47,6 +49,20 @@ class CatalogRepositoryImpl(
         // wrapRows converts the raw SQL query back into your TrackEntity format
         // so it works perfectly with your existing pagination extension!
         TrackEntity.wrapRows(query).paginate(params) { it.toTrack() }
+    }
+
+    override suspend fun searchTracks(query: String, params: PaginationParams): PaginatedResponse<Track> = db.dbQuery {
+        val q = query.lowercase()
+        val searchQuery = TrackTable
+            .innerJoin(AlbumTable)
+            .innerJoin(ArtistTable)
+            .selectAll()
+            .where {
+                (TrackTable.title.lowerCase() like "%$q%") or
+                (ArtistTable.name.lowerCase() like "%$q%")
+            }
+            .orderBy(TrackTable.title to SortOrder.ASC)
+        TrackEntity.wrapRows(searchQuery).paginate(params) { it.toTrack() }
     }
 
     override suspend fun getNewReleases(params: PaginationParams): PaginatedResponse<Album> = db.dbQuery {

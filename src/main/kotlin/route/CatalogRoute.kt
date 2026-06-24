@@ -29,6 +29,15 @@ class CatalogRoute(private val repository: CatalogRepository) {
                 val feed = repository.getNewReleases(pagination)
                 call.respond(HttpStatusCode.OK, feed)
             }
+
+            get("/search") {
+                val query = call.request.queryParameters["q"]
+                    ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing query parameter 'q'.")
+
+                val pagination = call.getPaginationParams()
+                val results = repository.searchTracks(query, pagination)
+                call.respond(HttpStatusCode.OK, results)
+            }
         }
 
         route("/artists") {

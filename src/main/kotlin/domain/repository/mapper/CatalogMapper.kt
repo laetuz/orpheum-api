@@ -3,6 +3,7 @@ package id.neotica.domain.repository.mapper
 import id.neotica.data.dao.catalog.album.AlbumEntity
 import id.neotica.data.dao.catalog.album.AlbumTable
 import id.neotica.data.dao.catalog.artist.ArtistEntity
+import id.neotica.data.dao.catalog.artist.ArtistTable
 import id.neotica.data.dao.catalog.track.TrackEntity
 import id.neotica.domain.model.catalog.Album
 import id.neotica.domain.model.catalog.Artist
@@ -24,7 +25,8 @@ fun AlbumEntity.toAlbum() = Album(
     title = this.title,
     releaseYear = this.releaseYear,
     coverUrl = this.coverUrl,
-    createdAt = this.createdAt.toString()
+    createdAt = this.createdAt.toString(),
+    artistName = this.artist.name
 )
 
 fun TrackEntity.toTrack() = Track(
@@ -44,5 +46,6 @@ fun ResultRow.toAlbum() = Album(
     title = this[AlbumTable.title],
     releaseYear = this[AlbumTable.releaseYear],
     coverUrl = this[AlbumTable.coverUrl],
-    createdAt = this[AlbumTable.createdAt].toString()
+    createdAt = this[AlbumTable.createdAt].toString(),
+    artistName = this[ArtistTable.name]
 )
