@@ -7,7 +7,6 @@ postgres = "42.7.7"
 hikari = "5.1.0"
 flyway = "10.22.0"
 koin = "4.2.1"
-jwt = "4.5.0"
 
 [libraries]
 # Ktor Core & Server
@@ -39,7 +38,6 @@ flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 koin-logger = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-java-jwt = { module = "com.auth0:java-jwt", version.ref = "jwt" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

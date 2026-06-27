@@ -54,7 +54,6 @@ dependencies {
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger)
     implementation(libs.logback.classic)
-    implementation(libs.java.jwt)
 }
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
